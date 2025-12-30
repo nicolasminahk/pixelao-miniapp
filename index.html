@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <!-- Google Tag Manager -->
+        <script>
+            ;(function (w, d, s, l, i) {
+                w[l] = w[l] || []
+                w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
+                var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s),
+                    dl = l != 'dataLayer' ? '&l=' + l : ''
+                j.async = true
+                j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
+                f.parentNode.insertBefore(j, f)
+            })(window, document, 'script', 'dataLayer', 'GTM-PM5VHTK4')
+        </script>
+        <!-- End Google Tag Manager -->
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <title>Pixelao - Editor de Pixel Art Online</title>
+        <meta
+            name="description"
+            content="Crea arte pixel retro con Pixelao, un editor online gratuito con herramientas de dibujo pixel a pixel, relleno, modo glitch y más. ¡Dibuja y comparte tu arte pixel!"
+        />
+        <meta name="keywords" content="pixel art, editor pixel, arte retro, pixel editor online, pixelao" />
+        <meta name="author" content="S333MA" />
+        <meta name="robots" content="index, follow" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="http://pixelao.com/" />
+        <meta property="og:title" content="Pixelao - Editor de Pixel Art Online" />
+        <meta
+            property="og:description"
+            content="Crea arte pixel retro con herramientas de dibujo pixel a pixel, relleno y efectos especiales. ¡Dibuja y comparte tu arte pixel!"
+        />
+        <meta property="og:image" content="http://pixelao.com/public/preview-image.png" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="http://pixelao.com/" />
+        <meta property="twitter:title" content="Pixelao - Editor de Pixel Art Online" />
+        <meta
+            property="twitter:description"
+            content="Crea arte pixel retro con herramientas de dibujo pixel a pixel, relleno y efectos especiales. ¡Dibuja y comparte tu arte pixel!"
+        />
+        <meta property="twitter:image" content="http://pixelao.com/public/preview-image.png" />
+
+        <link rel="icon" href="public/favicon.ico" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="public/apple-touch-icon.png" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Press Start 2P', cursive;
+                background-color: #1a1a1a;
+                color: #fff;
+                line-height: 1.6;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .console-container {
+                background-color: #383838;
+                border-radius: 20px;
+                padding: 20px;
+                box-shadow: 0 0 0 10px #272727, 0 0 0 20px #1a1a1a;
+                max-width: 95vw;
+                width: 800px;
+                position: relative;
+            }
+
+            .screen-container {
+                background-color: #000;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 20px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .screen-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(rgba(255, 255, 255, 0.1) 50%, transparent 50%);
+                background-size: 4px 4px;
+                pointer-events: none;
+                opacity: 0.1;
+            }
+
+            h1 {
+                text-align: center;
+                color: #0f0;
+                margin-bottom: 20px;
+                text-shadow: 2px 2px #060;
+                font-size: 1.5rem;
+            }
+
+            #pixelCanvas {
+                border: 4px solid #333;
+                image-rendering: pixelated;
+                cursor: crosshair;
+                width: 100%;
+                height: auto;
+                background-color: #fff;
+            }
+
+            .controls {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            .control-panel {
+                background-color: #272727;
+                border-radius: 10px;
+                padding: 15px;
+                margin-top: 20px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            button,
+            #uploadLabel {
+                font-family: 'Press Start 2P', cursive;
+                padding: 8px;
+                font-size: 10px;
+                border: 3px solid #000;
+                background-color: #444;
+                color: #0f0;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-align: center;
+                border-radius: 5px;
+            }
+
+            button:hover,
+            #uploadLabel:hover {
+                background-color: #666;
+                transform: translateY(-2px);
+            }
+
+            button:active,
+            #uploadLabel:active {
+                transform: translateY(1px);
+            }
+
+            .color-controls {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            #colorPicker {
+                width: 50px;
+                height: 50px;
+                border: 3px solid #000;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+
+            #imageUpload {
+                display: none;
+            }
+
+            .mode-select {
+                font-family: 'Press Start 2P', cursive;
+                background-color: #444;
+                color: #0f0;
+                border: 3px solid #000;
+                padding: 5px;
+                border-radius: 5px;
+            }
+
+            #undo,
+            #redo {
+                font-size: 20px;
+                padding: 10px 15px;
+                background-color: #2a2a2a;
+                border: 3px solid #0f0;
+                color: #0f0;
+                text-shadow: 0 0 5px #0f0;
+                box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+            }
+
+            #undo:hover,
+            #redo:hover {
+                background-color: #3a3a3a;
+                transform: translateY(-2px);
+                box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+            }
+
+            .creator-signature {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                font-size: 8px;
+                color: #0f0;
+                opacity: 0.6;
+                animation: blink 2s infinite;
+                z-index: 1;
+            }
+
+            .sidebar-footer {
+                margin-top: auto;
+                padding-top: 20px;
+                text-align: center;
+                display: none;
+                font-size: 8px;
+                color: #0f0;
+                opacity: 0.6;
+                animation: blink 2s infinite;
+            }
+
+            @keyframes blink {
+                0%,
+                100% {
+                    opacity: 0.6;
+                }
+                50% {
+                    opacity: 0.3;
+                }
+            }
+
+            .pixel-dot {
+                display: inline-block;
+                width: 4px;
+                height: 4px;
+                background-color: #0f0;
+                margin: 0 2px;
+                animation: pixelFloat 3s infinite;
+            }
+
+            @keyframes pixelFloat {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-2px);
+                }
+            }
+
+            /* Desktop Layout (≥1024px) */
+            @media (min-width: 1024px) {
+                body {
+                    padding: 40px;
+                }
+
+                .console-container {
+                    display: flex;
+                    flex-direction: row-reverse;
+                    gap: 20px;
+                    max-width: 1200px;
+                    width: 95vw;
+                    align-items: flex-start;
+                }
+
+                .screen-container {
+                    flex: 1;
+                    margin-bottom: 0;
+                }
+
+                .screen-container h1 {
+                    display: none;
+                }
+
+                .control-panel {
+                    width: 200px;
+                    margin-top: 0;
+                    min-height: 100%;
+                }
+
+                .controls {
+                    grid-template-columns: 1fr;
+                }
+
+                .color-controls {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                #colorPicker {
+                    width: 100%;
+                }
+
+                .mode-select {
+                    width: 100%;
+                }
+
+                .sidebar-title {
+                    display: block;
+                    text-align: center;
+                    color: #0f0;
+                    margin: 0 0 20px 0;
+                    text-shadow: 2px 2px #060;
+                    font-size: 1.2rem;
+                }
+
+                .creator-signature {
+                    display: none;
+                }
+
+                .sidebar-footer {
+                    display: block;
+                }
+            }
+
+            /* Mobile Layout (≤600px) */
+            @media (max-width: 600px) {
+                body {
+                    padding: 10px;
+                }
+
+                .console-container {
+                    padding: 15px;
+                }
+
+                .screen-container {
+                    padding: 15px;
+                }
+
+                h1 {
+                    font-size: 1.2rem;
+                    margin-bottom: 15px;
+                }
+
+                .sidebar-title {
+                    display: none;
+                }
+
+                .control-panel {
+                    padding: 12px;
+                }
+
+                button,
+                #uploadLabel {
+                    font-size: 9px;
+                    padding: 8px;
+                }
+
+                .controls {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 8px;
+                }
+
+                .color-controls {
+                    gap: 8px;
+                }
+
+                #colorPicker {
+                    width: 40px;
+                    height: 40px;
+                }
+
+                .creator-signature {
+                    position: absolute;
+                    bottom: 8px;
+                    right: 8px;
+                    font-size: 8px;
+                    display: block;
+                }
+
+                .sidebar-footer {
+                    display: none;
+                }
+
+                #undo,
+                #redo {
+                    font-size: 16px;
+                    padding: 8px 12px;
+                }
+            }
+
+            /* Tablet/Medium Layout (601px-1023px) */
+            @media (min-width: 601px) and (max-width: 1023px) {
+                .console-container {
+                    width: 90vw;
+                    max-width: 800px;
+                }
+
+                .controls {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+
+                .creator-signature {
+                    display: block;
+                }
+
+                .sidebar-footer {
+                    display: none;
+                }
+
+                .sidebar-title {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-3184YHMM2Z"></script>
+        <script>
+            window.dataLayer = window.dataLayer || []
+            function gtag() {
+                dataLayer.push(arguments)
+            }
+            gtag('js', new Date())
+
+            gtag('config', 'G-3184YHMM2Z')
+        </script>
+        <div class="console-container">
+            <div class="screen-container">
+                <h1>Pixelao</h1>
+                <canvas id="pixelCanvas"></canvas>
+                <div class="creator-signature">
+                    <span class="pixel-dot"></span>
+                    Created by S333MA
+                    <span class="pixel-dot"></span>
+                </div>
+            </div>
+            <div class="control-panel">
+                <h2 class="sidebar-title">Pixelao</h2>
+                <div class="color-controls">
+                    <input type="color" id="colorPicker" value="#000000" />
+                    <select class="mode-select" id="drawMode">
+                        <option value="pixel">Pixel</option>
+                        <option value="fill">Fill</option>
+                        <option value="fillAll">Fill All</option>
+                    </select>
+                </div>
+                <div class="controls">
+                    <button id="undo">←</button>
+                    <button id="redo">→</button>
+                    <button id="clear">Clear</button>
+                    <button id="glitch">Glitch</button>
+                    <button id="download">Save PNG</button>
+                    <button id="downloadJpg">Save JPG</button>
+                    <input type="file" id="imageUpload" accept="image/*" />
+                    <label for="imageUpload" id="uploadLabel">Upload Image</label>
+                </div>
+                <div class="sidebar-footer">
+                    <span class="pixel-dot"></span>
+                    Created by S333MA
+                    <span class="pixel-dot"></span>
+                </div>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
